@@ -157,7 +157,7 @@ def main():
 
     # train loop
         
-    epoch = 2
+    epoch = 100
     backup_param = copy_params(gen_net)
     load_params(gen_net, gen_avg_param)
     train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,
