@@ -91,16 +91,16 @@ def main():
     gen_scheduler = LinearLrDecay(gen_optimizer, args.g_lr, 0.0, 0, args.max_iter * args.n_critic)
     dis_scheduler = LinearLrDecay(dis_optimizer, args.d_lr, 0.0, 0, args.max_iter * args.n_critic)
 
-    # fid stat
-    if args.dataset.lower() == 'cifar10':
-        fid_stat = 'fid_stat/fid_stats_cifar10_train.npz'
-    elif args.dataset.lower() == 'stl10':
-        fid_stat = 'fid_stat/stl10_train_unlabeled_fid_stats_48.npz'
-    elif args.fid_stat is not None:
-        fid_stat = args.fid_stat
-    else:
-        raise NotImplementedError(f'no fid stat for {args.dataset.lower()}')
-    assert os.path.exists(fid_stat)
+    # # fid stat
+    # if args.dataset.lower() == 'cifar10':
+    #     fid_stat = 'fid_stat/fid_stats_cifar10_train.npz'
+    # elif args.dataset.lower() == 'stl10':
+    #     fid_stat = 'fid_stat/stl10_train_unlabeled_fid_stats_48.npz'
+    # elif args.fid_stat is not None:
+    #     fid_stat = args.fid_stat
+    # else:
+    #     raise NotImplementedError(f'no fid stat for {args.dataset.lower()}')
+    # assert os.path.exists(fid_stat)
 
     # epoch number for dis_net
     args.max_epoch = args.max_epoch * args.n_critic
@@ -115,34 +115,34 @@ def main():
     start_epoch = 0
     best_fid = 1e4
 
-    # set writer
-    if args.load_path:
-        print(f'=> resuming from {args.load_path}')
-        assert os.path.exists(args.load_path)
-        checkpoint_file = os.path.join(args.load_path)
-        assert os.path.exists(checkpoint_file)
-        checkpoint = torch.load(checkpoint_file)
-        start_epoch = checkpoint['epoch']
-        best_fid = checkpoint['best_fid']
-        gen_net.load_state_dict(checkpoint['gen_state_dict'])
-        dis_net.load_state_dict(checkpoint['dis_state_dict'])
-        gen_optimizer.load_state_dict(checkpoint['gen_optimizer'])
-        dis_optimizer.load_state_dict(checkpoint['dis_optimizer'])
-        avg_gen_net = deepcopy(gen_net)
-        avg_gen_net.load_state_dict(checkpoint['avg_gen_state_dict'])
-        gen_avg_param = copy_params(avg_gen_net)
-        del avg_gen_net
-        cur_stage = cur_stages(start_epoch, args)
-        gen_net.module.cur_stage = cur_stage
-        dis_net.module.cur_stage = cur_stage
-        gen_net.module.alpha = 1.
-        dis_net.module.alpha = 1.
-
-        # args.path_helper = checkpoint['path_helper']
-        
-    else:
-        # create new log dir
-        assert args.exp_name
+    # # set writer
+    # if args.load_path:
+    #     print(f'=> resuming from {args.load_path}')
+    #     assert os.path.exists(args.load_path)
+    #     checkpoint_file = os.path.join(args.load_path)
+    #     assert os.path.exists(checkpoint_file)
+    #     checkpoint = torch.load(checkpoint_file)
+    #     start_epoch = checkpoint['epoch']
+    #     best_fid = checkpoint['best_fid']
+    #     gen_net.load_state_dict(checkpoint['gen_state_dict'])
+    #     dis_net.load_state_dict(checkpoint['dis_state_dict'])
+    #     gen_optimizer.load_state_dict(checkpoint['gen_optimizer'])
+    #     dis_optimizer.load_state_dict(checkpoint['dis_optimizer'])
+    #     avg_gen_net = deepcopy(gen_net)
+    #     avg_gen_net.load_state_dict(checkpoint['avg_gen_state_dict'])
+    #     gen_avg_param = copy_params(avg_gen_net)
+    #     del avg_gen_net
+    #     cur_stage = cur_stages(start_epoch, args)
+    #     gen_net.module.cur_stage = cur_stage
+    #     dis_net.module.cur_stage = cur_stage
+    #     gen_net.module.alpha = 1.
+    #     dis_net.module.alpha = 1.
+    #
+    #     # args.path_helper = checkpoint['path_helper']
+    #
+    # else:
+    #     # create new log dir
+    #     assert args.exp_name
     args.path_helper = set_log_dir('logs', args.exp_name)
     logger = create_logger(args.path_helper['log_path'])
 
